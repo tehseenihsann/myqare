@@ -3,6 +3,11 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from './prisma';
 import bcrypt from 'bcryptjs';
 
+// Validate required environment variables
+if (!process.env.NEXTAUTH_SECRET) {
+  console.warn('⚠️  NEXTAUTH_SECRET is not set. Authentication may not work correctly.');
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -13,6 +18,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.error('Auth: Missing credentials');
           return null;
         }
 
@@ -23,7 +29,13 @@ export const authOptions: NextAuthOptions = {
             },
           });
 
-          if (!user || !user.isActive) {
+          if (!user) {
+            console.error('Auth: User not found:', credentials.email);
+            return null;
+          }
+
+          if (!user.isActive) {
+            console.error('Auth: User is inactive:', credentials.email);
             return null;
           }
 
@@ -33,9 +45,11 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isPasswordValid) {
+            console.error('Auth: Invalid password for:', credentials.email);
             return null;
           }
 
+          console.log('Auth: Successful login for:', credentials.email);
           return {
             id: user.id,
             email: user.email,
@@ -44,6 +58,13 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error('Auth error:', error);
+          // Log more details in production for debugging
+          if (process.env.NODE_ENV === 'production') {
+            console.error('Auth error details:', {
+              message: error instanceof Error ? error.message : 'Unknown error',
+              stack: error instanceof Error ? error.stack : undefined,
+            });
+          }
           return null;
         }
       },
@@ -70,8 +91,10 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  // Enable debug in production temporarily to troubleshoot
+  debug: true, // Set to false after fixing the issue
 };
 
