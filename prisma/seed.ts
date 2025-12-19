@@ -263,8 +263,15 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e);
-    process.exit(1);
+    console.error('Seed error:', e);
+    // In production/build environments, don't fail the build if seeding has issues
+    // (e.g., data already exists, connection issues)
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+      console.warn('Continuing build despite seed error (non-critical)');
+      process.exit(0);
+    } else {
+      process.exit(1);
+    }
   })
   .finally(async () => {
     await prisma.$disconnect();

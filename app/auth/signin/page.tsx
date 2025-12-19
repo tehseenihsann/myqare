@@ -26,13 +26,24 @@ export default function SignInPage() {
       });
 
       if (result?.error) {
-        setError('Invalid email or password');
-      } else {
+        // More detailed error messages
+        if (result.error === 'CredentialsSignin') {
+          setError('Invalid email or password');
+        } else if (result.error.includes('NEXTAUTH')) {
+          setError('Authentication configuration error. Please check server logs.');
+        } else {
+          setError(`Login failed: ${result.error}`);
+        }
+        console.error('Sign in error:', result.error);
+      } else if (result?.ok) {
         router.push('/admin');
         router.refresh();
+      } else {
+        setError('Unexpected error. Please try again.');
       }
     } catch (error) {
-      setError('An error occurred. Please try again.');
+      console.error('Sign in exception:', error);
+      setError('An error occurred. Please check the console and try again.');
     } finally {
       setLoading(false);
     }
