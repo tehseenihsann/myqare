@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* MyQare Brand Colors - Blue Theme (#79BBE3) */
+  --myqare-primary: #79BBE3;
+  --myqare-primary-light: #A8D4F0;
+  --myqare-primary-dark: #5A9BC8;
+  --myqare-primary-hover: #8CC8E8;
+  --myqare-background: #F5F9FC;
+  --myqare-sidebar: #E8F4FA;
+  --myqare-card: #FFFFFF;
+  --myqare-border: #D1E7F5;
+  
+  /* Legacy Pink Theme (for backward compatibility) */
+  --myqare-light-pink: #FCE7F3;
+  --myqare-sidebar-pink: #FCE7F3;
+  --myqare-soft-pink: #F8BBD0;
+  --myqare-active-pink: #F8BBD0;
+  --myqare-inactive-pink: #FCE7F3;
+  --myqare-card-pink: #FCE7F3;
+  --myqare-light-blue: #B3E5FC;
+  --myqare-blue: #4FC3F7;
+  --myqare-dark-blue: #4FC3F7;
+  
+  /* Theme Context Variables */
+  --theme-primary: #79BBE3;
+  --theme-primary-light: #A8D4F0;
+  --theme-primary-dark: #5A9BC8;
+  --theme-primary-hover: #8CC8E8;
+  --theme-background: #F5F9FC;
+  --theme-sidebar: #E8F4FA;
+  --theme-card: #FFFFFF;
+  --theme-text: #1F2937;
+  --theme-text-secondary: #6B7280;
+  --theme-border: #D1E7F5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
